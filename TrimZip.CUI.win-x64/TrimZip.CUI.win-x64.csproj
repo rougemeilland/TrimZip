@@ -3,34 +3,31 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net8.0;net7.0</TargetFrameworks>
+    <RootNamespace>TrimZip.CUI</RootNamespace>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>ziptrim</AssemblyName>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <Trimming>full</Trimming>
     <TieredCompilationQuickJit>false</TieredCompilationQuickJit>
+    <Trimming>full</Trimming>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishAot>True</PublishAot>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302</NoWarn>
-  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\TrimZip.CUI\IOExtensions.cs" Link="IOExtensions.cs" />
+    <Compile Include="..\TrimZip.CUI\Program.cs" Link="Program.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Palmtree.Core" Version="1.8.1-alpha" />
