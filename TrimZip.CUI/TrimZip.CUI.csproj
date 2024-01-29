@@ -33,13 +33,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Palmtree.Application" Version="1.0.3-alpha" />
-    <PackageReference Include="Palmtree.Core" Version="1.8.3-alpha" />
-    <PackageReference Include="Palmtree.IO.Console" Version="1.3.2-alpha" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TrimZip\TrimZip.csproj" />
+    <PackageReference Include="Palmtree.Application" Version="1.2.0-alpha" />
+    <PackageReference Include="Palmtree.Core" Version="1.9.0-alpha" />
+    <PackageReference Include="Palmtree.IO" Version="1.5.4-alpha" />
+    <PackageReference Include="Palmtree.IO.Compression.Archive.Zip" Version="1.5.3-alpha" />
+    <PackageReference Include="Palmtree.IO.Compression.Stream.Plugin.SevenZip.Bzip2" Version="1.0.6-alpha" />
+    <PackageReference Include="Palmtree.IO.Compression.Stream.Plugin.SevenZip.Deflate" Version="1.0.6-alpha" />
+    <PackageReference Include="Palmtree.IO.Compression.Stream.Plugin.SevenZip.Deflate64" Version="1.0.6-alpha" />
+    <PackageReference Include="Palmtree.IO.Compression.Stream.Plugin.SevenZip.Lzma" Version="1.0.6-alpha" />
   </ItemGroup>
 
 </Project>

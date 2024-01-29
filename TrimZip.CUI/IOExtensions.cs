@@ -4,7 +4,7 @@ using System.Numerics;
 using Palmtree;
 using Palmtree.IO;
 
-namespace TrimZip
+namespace TrimZip.CUI
 {
     internal static class IOExtensions
     {

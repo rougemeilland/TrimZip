@@ -12,7 +12,7 @@ using Palmtree.IO.Compression.Archive.Zip;
 using Palmtree.IO.Compression.Stream.Plugin.SevenZip;
 using Palmtree.IO.Console;
 
-namespace TrimZip
+namespace TrimZip.CUI
 {
     public class TrimZipApplication
         : BatchApplication
@@ -131,14 +131,19 @@ namespace TrimZip
             }
         }
 
-        protected override void Finish(ResultCode result)
+        protected override void Finish(ResultCode result, bool isLaunchedByConsoleApplicationLauncher)
         {
             if (result == ResultCode.Success)
                 TinyConsole.WriteLine("Completed.");
             else if (result == ResultCode.Cancelled)
                 TinyConsole.WriteLine("Cancelled.");
 
-            base.Finish(result);
+            if (isLaunchedByConsoleApplicationLauncher)
+            {
+                TinyConsole.Beep();
+                TinyConsole.WriteLine("Hit ENTTER key to exit.");
+                _ = TinyConsole.ReadLine();
+            }
         }
 
         private static ulong TrimZip(FilePath sourceZipFile, FilePath destinationZipFile)
