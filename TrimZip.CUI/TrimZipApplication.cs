@@ -296,41 +296,10 @@ namespace TrimZip.CUI
             var summary = ParsePackageDocument(packageDocumentEntry);
 
             var destinationFileName =
-                new string(
+                string.Concat(
                     $"[{string.Join("×", summary.Creators.Select(creator => creator.Name))}] {summary.Title.Name}{sourceZipFileExtension}"
-                    .Select(c =>
-                        c switch
-                        {
-                            >= '０' and <= '９' => (char)(c - '０' + '0'),
-                            >= 'Ａ' and <= 'Ｚ' => (char)(c - 'Ａ' + 'A'),
-                            >= 'ａ' and <= 'ｚ' => (char)(c - 'ａ' + 'a'),
-                            '　' => ' ',
-                            '！' => '!',
-                            '＃' => '#',
-                            '＄' => '$',
-                            '％' => '%',
-                            '＆' => '&',
-                            '’' => '\'',
-                            '（' => '(',
-                            '）' => ')',
-                            '＝' => '=',
-                            '‐' => '-',
-                            '＾' => '^',
-                            '＠' => '@',
-                            '‘' => '`',
-                            '［' => '[',
-                            '］' => ']',
-                            '｛' => '{',
-                            '｝' => '}',
-                            '＋' => '+',
-                            '＊' => '*',
-                            '；' => ';',
-                            '，' => ',',
-                            '．' => '.',
-                            '＿' => '_',
-                            _ => c,
-                        })
-                    .ToArray())
+                    .ToNarrow()
+                    .Select(c => c == '~' ? '～' : c))
                 .WindowsFileNameEncoding();
             var destinationFile = destinationDirectory.GetFile(destinationFileName);
             if (!destinationFile.Exists)
