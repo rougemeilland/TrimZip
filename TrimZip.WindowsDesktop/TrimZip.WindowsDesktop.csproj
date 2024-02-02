@@ -34,7 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Palmtree.Application" Version="1.3.2-alpha" />
+    <PackageReference Include="Palmtree.Application" Version="1.3.3-alpha" />
   </ItemGroup>
 
 </Project>
