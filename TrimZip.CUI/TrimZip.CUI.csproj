@@ -14,22 +14,22 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301</NoWarn>
+    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301;CA1513</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301</NoWarn>
+    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301;CA1513</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301</NoWarn>
+    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301;CA1513</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301</NoWarn>
+    <NoWarn>1701;1702;IDE0302;IDE0290;IDE0301;CA1513</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

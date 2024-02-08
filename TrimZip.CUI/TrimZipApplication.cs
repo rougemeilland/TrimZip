@@ -17,28 +17,6 @@ namespace TrimZip.CUI
     public class TrimZipApplication
         : BatchApplication
     {
-        private class EpubPackageDocumentSummary
-        {
-            public EpubPackageDocumentSummary((string Name, string? FileAs) title, IEnumerable<(string Name, string? FileAs, string? Role, string? RoleScheme, int? DisplaySeq)> creators, (string Name, string? FileAs)? publisher, string language, DateTimeOffset? modified, IEnumerable<string> subjects, string? description)
-            {
-                Title = title;
-                Creators = creators.ToList();
-                Publisher = publisher;
-                Language = language;
-                Modified = modified;
-                Subjects = subjects;
-                Description = description;
-            }
-
-            public (string Name, string? FileAs) Title { get; }
-            public IEnumerable<(string Name, string? FileAs, string? Role, string? RoleScheme, int? DisplaySeq)> Creators { get; }
-            public (string Name, string? FileAs)? Publisher { get; }
-            public string Language { get; }
-            public DateTimeOffset? Modified { get; }
-            public IEnumerable<string> Subjects { get; }
-            public string? Description { get; }
-        }
-
         private const string _epubMimeTypeFileName = "mimetype";
         private const string _epubMimeType = "application/epub+zip";
         private const string _epubContainerFileName = "META-INF/container.xml";
@@ -273,27 +251,9 @@ namespace TrimZip.CUI
             if (!IsEpubFile(sourceZipFile))
                 return null;
 
-            using var zipReader = sourceZipFile.OpenAsZipFile();
-            var entries = zipReader.EnumerateEntries().ToDictionary(entry => entry.FullName, entry => entry);
-            if (entries.Count <= 0)
+            var summary = ReadEpubSummary(sourceZipFile);
+            if (summary is null)
                 return null;
-            if (!entries.TryGetValue(_epubMimeTypeFileName, out var mimeTypeEntry))
-                throw new Exception($".epub ファイルに \"{_epubMimeTypeFileName}\" が見つかりません。");
-            using (var inStream = mimeTypeEntry.OpenContentStream())
-            using (var reader = inStream.AsTextReader())
-            {
-                if (reader.ReadToEnd() != _epubMimeType)
-                    return null;
-            }
-
-            if (!entries.TryGetValue(_epubContainerFileName, out var containerEntry))
-                throw new Exception($".epub ファイルに \"{_epubContainerFileName}\" が見つかりません。");
-
-            var packageDocumentFileName = ParseContainerXml(containerEntry).First();
-            if (!entries.TryGetValue(packageDocumentFileName, out var packageDocumentEntry))
-                throw new Exception($".epub ファイルに \"{packageDocumentFileName}\" が見つかりません。");
-
-            var summary = ParsePackageDocument(packageDocumentEntry);
 
             var destinationFileName =
                 string.Concat(
@@ -318,6 +278,34 @@ namespace TrimZip.CUI
                     return newDestinationFileName;
                 }
             }
+
+            static EpubPackageDocumentSummary? ReadEpubSummary(FilePath sourceZipFile)
+            {
+                using var entries = IndexedZipEntries.CreateInstance(sourceZipFile);
+                if (entries.Count <= 0)
+                    return null;
+                var mimeTypeEntry = entries[_epubMimeTypeFileName];
+                if (mimeTypeEntry is null)
+                    return null;
+                if (ReadContentText(mimeTypeEntry) != _epubMimeType)
+                    return null;
+
+                var containerEntry =
+                    entries[_epubContainerFileName]
+                    ?? throw new Exception($".epub ファイルに \"{_epubContainerFileName}\" が見つかりません。");
+                var packageDocumentFileName = ParseContainerXml(containerEntry).First();
+                var packageDocumentEntry =
+                    entries[packageDocumentFileName]
+                    ?? throw new Exception($".epub ファイルに \"{packageDocumentFileName}\" が見つかりません。");
+                return ParsePackageDocument(packageDocumentEntry);
+            }
+
+            static string ReadContentText(ZipSourceEntry entry)
+            {
+                using var inStream = entry.OpenContentStream();
+                using var reader = inStream.AsTextReader();
+                return reader.ReadToEnd();
+            }
         }
 
         private static bool IsEpubFile(FilePath file)
@@ -341,6 +329,15 @@ namespace TrimZip.CUI
                 return false;
 
 #if false
+            // 圧縮済みサイズおよび非圧縮サイズのチェックは敢えて行わない。
+            // その理由は、以下のような epub の実装が存在し、そのような実装の epub では圧縮済みサイズおよび非圧縮サイズは
+            // 正しく設定されていないことがある (常に 0 である場合もある) ため。
+            // 
+            // 1) ダミーの "mimetype" エントリのローカルヘッダ及びデータが先頭に存在し、かつ
+            // 2) のセントラルディレクトリにおいて、"mimetype" のヘッダが指すローカルヘッダが先頭以外の場所に存在する。
+            //   つまり、ZIP フォーマット的には "mimetype" のローカルヘッダ及びデータ本体は先頭以外の場所に存在する。
+            //   そしてそれは deflate 圧縮されていることもある。サイズ的に効果が微妙かあるいは逆にサイズが増大している可能性もあるがそれはさておき。
+
             // 圧縮済みサイズのチェック
             if (buffer.Slice(18, 4).ToUInt32LE() != _epubMimeTypeBytes.Length)
                 return false;
