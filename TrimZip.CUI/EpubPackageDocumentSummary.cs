@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace TrimZip.CUI
 {
-    internal class EpubPackageDocumentSummary
+    internal sealed class EpubPackageDocumentSummary
     {
         public EpubPackageDocumentSummary((string Name, string? FileAs) title, IEnumerable<(string Name, string? FileAs, string? Role, string? RoleScheme, int? DisplaySeq)> creators, (string Name, string? FileAs)? publisher, string language, DateTimeOffset? modified, IEnumerable<string> subjects, string? description)
         {

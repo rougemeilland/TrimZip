@@ -584,7 +584,7 @@ namespace TrimZip.CUI
                     .Where(element => element.Attribute("property")?.Value.Trim() == "dcterms:modified")
                     .SingleOrDefault();
 
-                var modified = modifiedElement is not null ? DateTimeOffset.Parse(modifiedElement.Value.Trim()) : (DateTimeOffset?)null;
+                var modified = modifiedElement is not null ? DateTimeOffset.Parse(modifiedElement.Value.Trim(), CultureInfo.InvariantCulture) : (DateTimeOffset?)null;
                 return
                     new EpubPackageDocumentSummary(
                         (title, titleFileAs),

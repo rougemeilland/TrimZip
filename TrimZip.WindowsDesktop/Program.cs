@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using Palmtree.Application;
-using Palmtree.IO;
 
 namespace TrimZip.WindowsDesktop
 {

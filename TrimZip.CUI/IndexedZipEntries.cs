@@ -7,7 +7,7 @@ using Palmtree.IO.Compression.Archive.Zip;
 
 namespace TrimZip.CUI
 {
-    internal class IndexedZipEntries
+    internal sealed class IndexedZipEntries
         : IDisposable
     {
         private readonly ZipArchiveFileReader _reader;
@@ -57,7 +57,7 @@ namespace TrimZip.CUI
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!_isDisposed)
             {

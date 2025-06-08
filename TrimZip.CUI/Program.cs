@@ -3,7 +3,7 @@ using Palmtree;
 
 namespace TrimZip.CUI
 {
-    internal class Program
+    internal sealed class Program
     {
         private static int Main(string[] args)
         {
