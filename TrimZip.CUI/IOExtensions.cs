@@ -20,7 +20,7 @@ namespace TrimZip.CUI
                 var availableBufferSize = checked((int)checked(pos - sourceStream.StartOfThisStream).Minimum(checked((ulong)_MAX_BUFFER_SIZE)));
                 var startPos = checked(pos - (ulong)availableBufferSize);
                 sourceStream.Seek(startPos);
-                Validation.Assert(sourceStream.ReadBytes(buffer.Slice(0, availableBufferSize)) == availableBufferSize, "sourceStream.ReadBytes(buffer.Slice(availableBufferSize)) == availableBufferSize");
+                Validation.Assert(sourceStream.ReadBytes(buffer.Slice(0, availableBufferSize)) == availableBufferSize);
                 for (var index = availableBufferSize - 1; index >= 0; --index)
                     yield return (startPos + checked((ulong)index), buffer[index]);
                 checked

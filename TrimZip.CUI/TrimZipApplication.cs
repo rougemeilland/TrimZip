@@ -128,7 +128,7 @@ namespace TrimZip.CUI
         {
             var arrayOfLength = EnumerateLengthOfZipFile(sourceZipFile).ToArray();
             if (arrayOfLength.Length <= 0)
-                throw new Exception($"It is not a ZIP format file.: \"{sourceZipFile.FullName}\"");
+                throw new ApplicationException($"It is not a ZIP format file.: \"{sourceZipFile.FullName}\"");
             var actualLength = arrayOfLength[0];
             if (sourceZipFile.Length > actualLength)
             {
@@ -197,11 +197,9 @@ namespace TrimZip.CUI
                     inStream.Seek(positionOfEOCDR);
                     var eocdrBufferLength = checked((int)(inStream.EndOfThisStream - positionOfEOCDR));
                     var eocdrBuffer = inStream.ReadBytes(checked((int)(inStream.EndOfThisStream - positionOfEOCDR)));
-                    Validation.Assert(eocdrBuffer.Length == eocdrBufferLength, "eocdrBuffer.Length == eocdrBufferLength");
-                    Validation.Assert(eocdrBuffer.Length >= 22, "eocdrBuffer.Length >= 22");
-                    Validation.Assert(
-                        eocdrBuffer.Span[0] == 0x50 && eocdrBuffer.Span[1] == 0x4b && eocdrBuffer.Span[2] == 0x05 && eocdrBuffer.Span[3] == 0x06,
-                        "eocdrBuffer.Span[0] == 0x50 && eocdrBuffer.Span[1] == 0x4b && eocdrBuffer.Span[2] == 0x05 && eocdrBuffer.Span[3] == 0x06");
+                    Validation.Assert(eocdrBuffer.Length == eocdrBufferLength);
+                    Validation.Assert(eocdrBuffer.Length >= 22);
+                    Validation.Assert(eocdrBuffer.Span[0] == 0x50 && eocdrBuffer.Span[1] == 0x4b && eocdrBuffer.Span[2] == 0x05 && eocdrBuffer.Span[3] == 0x06);
 
                     // EOCDR の後がすべて 0 であることを確認する
                     var commentLength = eocdrBuffer.Slice(20, 2).ToUInt16LE();
@@ -292,11 +290,11 @@ namespace TrimZip.CUI
 
                 var containerEntry =
                     entries[_epubContainerFileName]
-                    ?? throw new Exception($".epub ファイルに \"{_epubContainerFileName}\" が見つかりません。");
+                    ?? throw new ApplicationException($".epub ファイルに \"{_epubContainerFileName}\" が見つかりません。");
                 var packageDocumentFileName = ParseContainerXml(containerEntry).First();
                 var packageDocumentEntry =
                     entries[packageDocumentFileName]
-                    ?? throw new Exception($".epub ファイルに \"{packageDocumentFileName}\" が見つかりません。");
+                    ?? throw new ApplicationException($".epub ファイルに \"{packageDocumentFileName}\" が見つかりません。");
                 return ParsePackageDocument(packageDocumentEntry);
             }
 
@@ -382,7 +380,7 @@ namespace TrimZip.CUI
             var containerText = containerReader.ReadToEnd();
             var containerDocument =
                 XDocument.Parse(containerText)
-                ?? throw new Exception("\"META-INF/container.xml\" ファイルが XML 形式ではありません。");
+                ?? throw new ApplicationException("\"META-INF/container.xml\" ファイルが XML 形式ではありません。");
 
             var rootFileElements = containerDocument.Descendants(XName.Get("rootfile", "urn:oasis:names:tc:opendocument:xmlns:container")).ToList();
             foreach (var rootFileElement in rootFileElements)
@@ -394,17 +392,17 @@ namespace TrimZip.CUI
                 {
                     var mediaTypeAttribute =
                         rootFileElement.Attribute(_epubContainerAttributeMediaType)
-                        ?? throw new Exception($"\"META-INF/container.xml\" ファイルの \"rootfile\" 要素に \"{_epubContainerAttributeMediaType}\" 属性がありません。");
+                        ?? throw new ApplicationException($"\"META-INF/container.xml\" ファイルの \"rootfile\" 要素に \"{_epubContainerAttributeMediaType}\" 属性がありません。");
                     if (mediaTypeAttribute.Value.Trim() != _epubMediaTypeOfPackageDocument)
-                        throw new Exception($"\"META-INF/container.xml\" ファイルの \"rootfile\" 要素の \"{_epubContainerAttributeMediaType}\" 属性が \"{mediaTypeAttribute.Value.Trim()}\" になっていますが、\"{_epubMediaTypeOfPackageDocument}\" でなければなりません。");
+                        throw new ApplicationException($"\"META-INF/container.xml\" ファイルの \"rootfile\" 要素の \"{_epubContainerAttributeMediaType}\" 属性が \"{mediaTypeAttribute.Value.Trim()}\" になっていますが、\"{_epubMediaTypeOfPackageDocument}\" でなければなりません。");
                     var fullPathAttribute =
                         rootFileElement.Attribute(_epubContainerAttributeFullPath)
-                        ?? throw new Exception($"\"META-INF/container.xml\" ファイルの \"rootfile\" 要素に \"{_epubContainerAttributeFullPath}\" 属性がありません。");
+                        ?? throw new ApplicationException($"\"META-INF/container.xml\" ファイルの \"rootfile\" 要素に \"{_epubContainerAttributeFullPath}\" 属性がありません。");
                     return fullPathAttribute.Value.Trim();
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("\"META-INF/container.xml\" ファイルの解析に失敗しました。", ex);
+                    throw new ApplicationException("\"META-INF/container.xml\" ファイルの解析に失敗しました。", ex);
                 }
             }
         }
@@ -419,7 +417,7 @@ namespace TrimZip.CUI
             var packageDocumentText = packageDocumentReader.ReadToEnd();
             var packageDocument =
                 XDocument.Parse(packageDocumentText)
-                ?? throw new Exception($"\"{packageDocumentEntry.FullName}\" ファイルが XML 形式ではありません。");
+                ?? throw new ApplicationException($"\"{packageDocumentEntry.FullName}\" ファイルが XML 形式ではありません。");
 
             try
             {
@@ -463,7 +461,7 @@ namespace TrimZip.CUI
                 string? titleFileAs;
                 if (titles.Length <= 0)
                 {
-                    throw new Exception("\"dc:title\" 要素が見つかりません。");
+                    throw new ApplicationException("\"dc:title\" 要素が見つかりません。");
                 }
                 else if (titles.Length == 1)
                 {
@@ -474,7 +472,7 @@ namespace TrimZip.CUI
                     var titleType0 = titles[0].titleType;
                     var titleType1 = titles[1].titleType;
                     if (titleType0 is null || titleType1 is null)
-                        throw new Exception("\"dc:title\" 要素が複数ありますが、\"title-type\" メタデータが定義されていません。");
+                        throw new ApplicationException("\"dc:title\" 要素が複数ありますが、\"title-type\" メタデータが定義されていません。");
 
                     if (titleType0 == "main" && titleType1 == "subtitle")
                     {
@@ -486,7 +484,7 @@ namespace TrimZip.CUI
                     }
                     else
                     {
-                        throw new Exception("\"dc:title\" 要素の \"title-type\" 属性が未知の値です。");
+                        throw new ApplicationException("\"dc:title\" 要素の \"title-type\" 属性が未知の値です。");
                     }
 
                     var title0 = titles[0].name;
@@ -504,7 +502,7 @@ namespace TrimZip.CUI
                 }
                 else
                 {
-                    throw new Exception("\"dc:title\" 要素が多すぎます。");
+                    throw new ApplicationException("\"dc:title\" 要素が多すぎます。");
                 }
 
                 var creators =
@@ -592,12 +590,12 @@ namespace TrimZip.CUI
                         publisherElement is not null ? (publisherElement.Value.Trim(), publisherFileAsAttribute?.Value.Trim()) : null,
                         languageElement.Value.Trim(),
                         modified,
-                        subjectElement is not null ? subjectElement.Value.Trim().Split(',') : Array.Empty<string>(),
+                        subjectElement is not null ? subjectElement.Value.Trim().Split(',') : [],
                         descriptionElement?.Value.Trim());
             }
             catch (Exception ex)
             {
-                throw new Exception("\"META-INF/container.xml\" ファイルの解析に失敗しました。", ex);
+                throw new ApplicationException("\"META-INF/container.xml\" ファイルの解析に失敗しました。", ex);
             }
         }
     }

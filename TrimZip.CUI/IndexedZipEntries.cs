@@ -26,8 +26,7 @@ namespace TrimZip.CUI
         {
             get
             {
-                if (_isDisposed)
-                    throw new ObjectDisposedException(GetType().FullName);
+                ObjectDisposedException.ThrowIf(_isDisposed, this);
 
                 return _entries.Count;
             }
@@ -37,8 +36,7 @@ namespace TrimZip.CUI
         {
             get
             {
-                if (_isDisposed)
-                    throw new ObjectDisposedException(GetType().FullName);
+                ObjectDisposedException.ThrowIf(_isDisposed, this);
 
                 return _entries.TryGetValue(entryName, out var entry) ? entry : null;
             }
