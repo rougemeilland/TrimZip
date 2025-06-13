@@ -5,7 +5,7 @@ using Palmtree.IO.Console;
 
 namespace TrimZip.CUI
 {
-    internal sealed class Program
+    internal static class Program
     {
         private static int Main(string[] args)
         {
